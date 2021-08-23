@@ -13,6 +13,8 @@ async function main() {
   const key = await hiddenInput("Enter private key: ");
   const wallet = new hre.ethers.Wallet(key);
   const connectedWallet = await wallet.connect(hre.ethers.provider);
+  console.log(`\nConnected to wallet ${connectedWallet.address}\n`);
+  const balance = await connectedWallet.getBalance();
 
   const WoodToken = await hre.ethers.getContractFactory('WoodToken', connectedWallet);
   
@@ -22,6 +24,7 @@ async function main() {
   console.log(`\nEstimated gas price: ${hre.ethers.utils.formatUnits(gasPrice, 'gwei')} gwei`);
   console.log(`Estimated gas limit: ${gasEstimate.toString()}`);
   console.log(`Estimated total gas fee: ${hre.ethers.utils.formatUnits(totalGas, 'ether')} ETH\n`);
+  console.log(`Your balance: ${hre.ethers.utils.formatUnits(balance, 'ether')} ETH\n`);
 
   const confirm = await input("Type 'DEPLOY' to confirm and deploy contract: ");
 

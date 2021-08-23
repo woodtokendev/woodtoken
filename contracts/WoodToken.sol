@@ -17,12 +17,12 @@ contract WoodToken is ERC20, ERC20Burnable, Ownable {
     address public immutable reserveAddress;
     
     constructor() ERC20("WoodToken", "WOOD") {
-        uint256 _initialSupply = 340 * (10 ** 10) * (10 ** 18);
+        uint256 _initialSupply = 304 * (10 ** 10) * (10 ** 18);
         _transactionLimit = 15200000000 * (10 ** 18);
         _transactionFee = 0.00304 * (10 ** 5);
         _burnAmount = 15000000000 * (10 ** 18);
         
-        address reserve = address(0xC5C6b29Edbee4187DE5aE85c9D8493D140cdbf62);
+        address reserve = address(0x000725E06561e3328A27837a9F3dA5eAAcB15895);
         reserveAddress = reserve;
         
         uint256 burnWalletInitialAmount = (_initialSupply * 35) / 100;
