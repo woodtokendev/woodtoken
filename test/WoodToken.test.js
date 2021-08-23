@@ -61,17 +61,17 @@ describe('WoodToken', () => {
             await expect(subjectAsAddr1.transfer(transferAddress, 15200000001)).to.be.reverted;
         });
     
-        it('allows tokens to be staked & unstaked', async () => {
+        it('allows tokens to be locked & unlocked', async () => {
             const creatorAddress = (await ethers.getSigner()).address;
             const initialBalance = await subject.balanceOf(creatorAddress);
     
-            await subject.stakeTokens(initialBalance);
+            await subject.lockTokens(initialBalance);
     
             expect(await subject.balanceOf(creatorAddress)).to.equal(0);
             expect(await subject.balanceOf(subject.address)).to.equal(initialBalance);
             expect(await subject.allowance(subject.address, creatorAddress)).to.equal(initialBalance);
             
-            await subject.unstakeTokens();
+            await subject.unlockTokens();
     
             expect(await subject.balanceOf(creatorAddress)).to.equal(initialBalance);
             expect(await subject.balanceOf(subject.address)).to.equal(0);
@@ -79,8 +79,40 @@ describe('WoodToken', () => {
         });
 
         it('stake enforces transaction limit', async () => {    
-            await expect(subjectAsAddr1.stakeTokens(15200000000)).to.not.be.reverted;
-            await expect(subjectAsAddr1.stakeTokens(15200000001)).to.be.reverted;
+            await expect(subjectAsAddr1.lockTokens(15200000000)).to.not.be.reverted;
+            await expect(subjectAsAddr1.lockTokens(15200000001)).to.be.reverted;
+        });
+
+        it('allows tokens to be burned', async () => {
+            const owner = await ethers.getSigner();
+            const initialBalance = await subject.balanceOf(owner.address);
+            const initialSupply = await subject.totalSupply();
+            const burnAmount = 1000000;
+
+            await subject.burn(burnAmount);
+
+            const finalBalance = await subject.balanceOf(owner.address);
+            const finalSupply = await subject.totalSupply();
+
+            expect(finalBalance).to.equal(initialBalance.sub(burnAmount));
+            expect(finalSupply).to.equal(initialSupply.sub(burnAmount));
+        });
+
+        it('burn enforces transaction limit', async () => {
+            await expect(subjectAsAddr1.burn(15200000000)).to.not.be.reverted;
+            await expect(subjectAsAddr1.burn(15200000001)).to.be.reverted;
+        });
+
+        it('burn enforces transaction fee', async () => {
+            const reserveInitialBalance = await subject.balanceOf(reserveAddress);
+            const burnAmount = 100000;
+            const expectedFee = 304;
+    
+            await subjectAsAddr1.burn(burnAmount);
+    
+            const reserveFinalBalance = await subject.balanceOf(reserveAddress);
+    
+            expect(reserveFinalBalance).to.equal(reserveInitialBalance.add(expectedFee));
         });
     });
 });
