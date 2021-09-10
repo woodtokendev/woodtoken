@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 
 describe('WoodToken', () => {
     var subject;
-    const reserveAddress = '0xC5C6b29Edbee4187DE5aE85c9D8493D140cdbf62';
+    const reserveAddress = '0x000725E06561e3328A27837a9F3dA5eAAcB15895';
 
     beforeEach(async () => {
         const WoodToken = await ethers.getContractFactory("WoodToken");
